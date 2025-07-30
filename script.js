@@ -8,8 +8,8 @@ const expenseList = document.getElementById('expense-list');
 const categoryGrid = document.getElementById('category-grid');
 const currentDate = document.getElementById('current-date');
 
-// Set current date and time (04:28 PM IST, July 21, 2025)
-currentDate.textContent = new Date('2025-07-21T16:28:00+05:30').toLocaleString('en-US', {
+// Set current date and time (11:50 AM IST, July 30, 2025)
+currentDate.textContent = new Date('2025-07-30T11:50:00+05:30').toLocaleString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -20,7 +20,7 @@ currentDate.textContent = new Date('2025-07-21T16:28:00+05:30').toLocaleString('
     timeZone: 'Asia/Kolkata'
 });
 
-// Define updated categories with icons (using placeholders; replace with images if available)
+// Define categories with icons
 const categories = [
     { name: 'Food', icon: '🍽️' },
     { name: 'Grocery', icon: '🛒' },
@@ -45,21 +45,26 @@ categories.forEach(category => {
     categoryGrid.appendChild(btn);
 });
 
-// Display expenses
-function displayExpenses() {
+// Display all expenses
+function displayAllExpenses() {
     expenseList.innerHTML = '';
-    const todayExpenses = expenses.filter(exp => {
-        const expDate = new Date(exp.date);
-        const today = new Date('2025-07-21T16:28:00+05:30');
-        return expDate.toDateString() === today.toDateString();
-    });
-    if (todayExpenses.length === 0) {
-        expenseList.innerHTML = '<li>No expenses recorded today</li>';
+    if (expenses.length === 0) {
+        expenseList.innerHTML = '<li>No expenses recorded</li>';
     } else {
-        todayExpenses.forEach((expense, index) => {
+        expenses.forEach((expense, index) => {
+            const expDate = new Date(expense.date).toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+                timeZone: 'Asia/Kolkata'
+            });
             const li = document.createElement('li');
             li.innerHTML = `
-                <span>${expense.title} - ₹${expense.amount.toFixed(2)} (${expense.category})</span>
+                <span>${expense.title} - ₹${expense.amount.toFixed(2)} (${expense.category}, ${expDate})</span>
                 <button class="delete-btn" onclick="deleteExpense(${index})">Delete</button>
             `;
             expenseList.appendChild(li);
@@ -80,15 +85,15 @@ form.addEventListener('submit', (e) => {
         return;
     }
     const expense = {
-        title: 'Expense', // Default title; add <input> for custom title if needed
+        title: 'Expense',
         amount: parseFloat(document.getElementById('amount').value) || 0,
-        date: new Date('2025-07-21T16:28:00+05:30').toISOString(),
+        date: new Date('2025-07-30T11:50:00+05:30').toISOString(),
         category: selectedCategory,
         description: document.getElementById('description').value || ''
     };
     expenses.push(expense);
     saveExpenses();
-    displayExpenses();
+    displayAllExpenses();
     form.reset();
     document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('selected'));
     selectedCategory = '';
@@ -98,8 +103,22 @@ form.addEventListener('submit', (e) => {
 function deleteExpense(index) {
     expenses.splice(index, 1);
     saveExpenses();
-    displayExpenses();
+    displayAllExpenses();
 }
 
-// Initial display
-displayExpenses();
+// Add button to show all expenses
+const showAllButton = document.createElement('button');
+showAllButton.textContent = 'Show All Expenses';
+showAllButton.style.width = '100%';
+showAllButton.style.margin = '10px 0';
+showAllButton.style.padding = '10px';
+showAllButton.style.backgroundColor = '#4a90e2';
+showAllButton.style.color = 'white';
+showAllButton.style.border = 'none';
+showAllButton.style.borderRadius = '5px';
+showAllButton.style.cursor = 'pointer';
+showAllButton.addEventListener('click', displayAllExpenses);
+document.querySelector('.container').insertBefore(showAllButton, form);
+
+// Initial display (show all expenses)
+displayAllExpenses();
