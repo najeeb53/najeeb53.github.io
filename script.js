@@ -8,17 +8,22 @@ const expenseList = document.getElementById('expense-list');
 const categoryGrid = document.getElementById('category-grid');
 const currentDate = document.getElementById('current-date');
 
-// Set current date and time (12:24 PM IST, July 30, 2025)
-currentDate.textContent = new Date('2025-07-30T12:24:00+05:30').toLocaleString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: 'Asia/Kolkata'
-});
+// Update date and time dynamically
+function updateDateTime() {
+    currentDate.textContent = new Date().toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'Asia/Kolkata'
+    });
+}
+// Initial update and set interval to refresh every minute
+updateDateTime();
+setInterval(updateDateTime, 60000); // Updates every 60 seconds
 
 // Define categories with icons
 const categories = [
@@ -111,7 +116,7 @@ form.addEventListener('submit', (e) => {
     const expense = {
         title: 'Expense',
         amount: parseFloat(document.getElementById('amount').value) || 0,
-        date: new Date('2025-07-30T12:24:00+05:30').toISOString(),
+        date: new Date().toISOString(), // Use current time for new expenses
         category: selectedCategory,
         description: document.getElementById('description').value || ''
     };
@@ -146,9 +151,9 @@ document.querySelector('.container').insertBefore(showAllButton, form);
 
 // Initial display (show only today's expenses by default)
 expenseList.innerHTML = '';
+const today = new Date();
 const todayExpenses = expenses.filter(exp => {
     const expDate = new Date(exp.date);
-    const today = new Date('2025-07-30T12:24:00+05:30');
     return expDate.toDateString() === today.toDateString();
 });
 if (todayExpenses.length === 0) {
