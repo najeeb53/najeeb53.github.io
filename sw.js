@@ -1,3 +1,4 @@
+// Version 1.1
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open('expense-tracker-cache').then((cache) => {
